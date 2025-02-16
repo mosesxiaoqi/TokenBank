@@ -59,9 +59,11 @@ contract ERC20 is IERC20, IERC20Metadata {
     }
     
     function transferFrom(address _from, address _to, uint256 _amount) public returns (bool success) {
-        uint256 currentAllowance = allowance(_from, msg.sender);
-        require(currentAllowance >= _amount, "ERC20: transfer amount exceeds allowance");
-        _approve(_from, msg.sender, currentAllowance - _amount);
+        // uint256 currentAllowance = allowance(_from, msg.sender);
+        // require(currentAllowance >= _amount, "ERC20: transfer amount exceeds allowance");
+        // // msg.sender 是 _from 授权的地址，from 是转账的地址, from想要向bank转账，需要先授权给msg.sender(bank合约地址), msg.sender和to是一地址
+        // _approve(_from, msg.sender, currentAllowance - _amount);
+        _spendAllowance(_from, _to, _amount);
         _transfer(_from, _to, _amount);
         return true;
     }
@@ -82,5 +84,11 @@ contract ERC20 is IERC20, IERC20Metadata {
     function _approve(address _owner, address _spender, uint256 _amount) internal {
         allowances[_owner][_spender] = _amount;
         emit Approval(_owner, _spender, _amount);
+    }
+
+    function _spendAllowance(address _owner, address _spender, uint256 _amount) internal {
+        uint256 currentAllowance = allowance(_owner, _spender);
+        require(currentAllowance >= _amount, "ERC20: transfer amount exceeds allowance");
+        _approve(_owner, _spender, currentAllowance - _amount);
     }
 }
