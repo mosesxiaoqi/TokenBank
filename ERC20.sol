@@ -59,11 +59,13 @@ contract ERC20 is IERC20, IERC20Metadata {
     }
     
     function transferFrom(address _from, address _to, uint256 _amount) public returns (bool success) {
-        // uint256 currentAllowance = allowance(_from, msg.sender);
-        // require(currentAllowance >= _amount, "ERC20: transfer amount exceeds allowance");
-        // // msg.sender 是 _from 授权的地址，from 是转账的地址, from想要向bank转账，需要先授权给msg.sender(bank合约地址), msg.sender和to是一地址
-        // _approve(_from, msg.sender, currentAllowance - _amount);
-        _spendAllowance(_from, _to, _amount);
+        // msg.sender 是 _from 授权的地址，from 是转账的地址, 
+        // transferFrom是调用第三方代替自己支付，
+        // 所以from是自己，to是要把钱转过去的地址，在这里msg.sender是第三方
+        // from想要向bank转账，需要先授权给msg.sender, 
+        // 在tokenbank这个合约里，msg.sender和to是一个，相当于合约给自己赚钱
+        // 正常是msg.sender代替自己给to(其他地址)转钱
+        _spendAllowance(_from, msg.sender, _amount);
         _transfer(_from, _to, _amount);
         return true;
     }
