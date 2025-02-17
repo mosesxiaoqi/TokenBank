@@ -5,7 +5,7 @@ pragma solidity >=0.8.24 <0.9.0;
 import "./IERC20.sol";
 import "./IERC20Metadata.sol";
 
-contract ERC20 is IERC20, IERC20Metadata {
+abstract contract ERC20 is IERC20, IERC20Metadata {
     string private _name;
     string private _symbol;
     uint8 private _decimals;
@@ -15,10 +15,10 @@ contract ERC20 is IERC20, IERC20Metadata {
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
-    constructor() {
-        _name = "SharyToken";
-        _symbol = "TONG";
-        _decimals = 18;
+    constructor(string memory n, string memory s, uint8 d) {
+        _name = n;
+        _symbol = s;
+        _decimals = d;
         _totalSupply = 1000000 * 10 ** uint256(_decimals);
         balances[msg.sender] = _totalSupply;
         owner = msg.sender;
@@ -53,7 +53,7 @@ contract ERC20 is IERC20, IERC20Metadata {
         return owner;
     }
 
-    function transfer(address _to, uint256 _amount) external returns (bool) {
+    function transfer(address _to, uint256 _amount) public returns (bool) {
         _transfer(msg.sender, _to, _amount);
         return true;  
     }

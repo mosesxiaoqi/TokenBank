@@ -5,7 +5,9 @@ pragma solidity >=0.8.24 <0.9.0;
 import "./IERC20.sol";
 
 contract TokenBank {
-    mapping(address => mapping(address => uint256)) private balances;
+    mapping(address => mapping(address => uint256)) internal balances;
+
+    constructor() {}
 
     function deposit(address token, uint256 _amount) public {
         (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(IERC20.transferFrom.selector, msg.sender, address(this), _amount));
